@@ -88,7 +88,7 @@ body.dark .card.present { background:#2f4f2f; }
 </div>
 
 
-&nbsp;&nbsp;&nbsp;&nbsp;AP - After Produções
+&nbsp;&nbsp;&nbsp;AP - After Produções
 
 <!-- MENU TOPO -->
 <div class="header">
@@ -212,10 +212,21 @@ function addPessoa(){
 }
 
 function confirmarPresenca(id, btn){
+  // Marca presença no Firebase
   db.ref("pessoas/"+id+"/presente").set(true);
+
+  // Atualiza botão e card visualmente
   btn.disabled = true;
   btn.parentElement.classList.add("present");
+
+  // LIMPAR O CAMPO DE BUSCA
+  document.getElementById("busca").value = "";
+
+  // RECARREGAR LISTA COMPLETA
+  atualizarLista();
 }
+
+
 
 function filtrarTabela(){
   const termo=document.getElementById("busca").value.toLowerCase();
@@ -257,5 +268,3 @@ window.addEventListener("scroll",()=>{ document.getElementById("btnTopo").style.
 
 </body>
 </html>
-
-
