@@ -224,27 +224,16 @@ function addPessoa(){
 }
 
 function confirmarPresenca(id, btn){
-  // Marca presença no Firebase
-  db.ref("pessoas/" + id + "/presente").set(true);
-
-  // Atualiza visualmente
+  db.ref("pessoas/"+id+"/presente").set(true);
   btn.disabled = true;
-
+  
   const card = btn.parentElement;
-  card.classList.add("present");
-
-  // ADICIONAR ANIMAÇÃO
-  card.classList.add("animando");
-
-  // Remover classe após animação para poder animar de novo se precisar
+  card.classList.add("present", "animando");
+  
+  // Remove a classe 'animando' após a animação
   setTimeout(() => card.classList.remove("animando"), 350);
-
-  // LIMPA BUSCA
-  document.getElementById("busca").value = "";
-
-  // RECARREGA LISTA COMPLETA
-  atualizarLista();
 }
+
 
 
 
@@ -288,4 +277,5 @@ window.addEventListener("scroll",()=>{ document.getElementById("btnTopo").style.
 
 </body>
 </html>
+
 
