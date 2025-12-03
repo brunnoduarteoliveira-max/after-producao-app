@@ -10,38 +10,89 @@
 <meta name="theme-color" content="#000000">
 
 <style>
+/* =========================
+   RESET + BASE
+========================= */
 html, body {
     margin: 0; padding: 0;
+    font-family: Arial, sans-serif;
     background: #f7f7f7;
-    font-family: Arial;
-}
-body.dark { background:#222; color:#eee; }
-.container { padding:20px; }
-input, button {
-    padding: 10px;
-    margin-top: 10px;
-    width: 100%;
     font-size: 16px;
 }
-table { width:100%; margin-top:20px; border-collapse:collapse; }
-td, th {
-    border:1px solid #ccc;
-    padding:12px;
+
+body.dark { background:#222; color:#eee; }
+
+.container {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+    box-sizing: border-box;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
+
+body.dark .container { background:#333; color:white; }
+
+input, button {
+    width: 100%;
+    padding: 12px;
+    margin-top: 10px;
+    box-sizing: border-box;
+    font-size: 16px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+}
+
+button {
+    background: #007bff;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    border: none;
+    transition: 0.2s;
+}
+
+button:hover { background: #0056b3; }
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+th, td {
+    border: 1px solid #ccc;
+    padding: 12px;
+    text-align: left;
+    font-size: 16px;
+}
+
 .present {
-    background:#c8ffc8;
-    font-weight:bold;
-}
-body.dark .present { background:#2f4f2f; }
-
-/* LOGIN */
-#loginModal{
-    position:fixed;top:0;left:0;width:100%;height:100%;
-    background:black;color:white;display:flex;
-    flex-direction:column;justify-content:center;
-    align-items:center;z-index:9999;
+    background: #c8ffc8;
+    font-weight: bold;
 }
 
+body.dark .present { background: #2f4f2f; }
+
+#contador {
+    margin-top: 15px;
+    font-weight: bold;
+    font-size: 18px;
+    text-align: center;
+}
+
+/* LOGIN MODAL */
+#loginModal {
+    position: fixed;
+    top:0; left:0; width:100%; height:100%;
+    background:black; color:white;
+    display:flex; justify-content:center; align-items:center;
+    flex-direction:column; z-index:9999;
+}
+
+#loginModal input { max-width:300px; }
+#loginModal button { max-width:180px; margin-top:10px; }
 </style>
 </head>
 
@@ -50,8 +101,8 @@ body.dark .present { background:#2f4f2f; }
 <!-- LOGIN -->
 <div id="loginModal">
     <h2>Digite a senha</h2>
-    <input type="password" id="senhaInput" placeholder="Senha" style="max-width:300px;">
-    <button onclick="verificarSenha()" style="max-width:180px;">Entrar</button>
+    <input type="password" id="senhaInput" placeholder="Senha">
+    <button onclick="verificarSenha()">Entrar</button>
 </div>
 
 <div class="container">
@@ -60,7 +111,7 @@ body.dark .present { background:#2f4f2f; }
 <button id="darkBtn" onclick="toggleDark()">Modo Escuro</button>
 
 <h3>Adicionar nome</h3>
-<input type="text" id="nome">
+<input type="text" id="nome" placeholder="Digite o nome...">
 <button onclick="addPessoa()">Adicionar</button>
 
 <h3>Importar CSV/Excel</h3>
@@ -70,7 +121,7 @@ body.dark .present { background:#2f4f2f; }
 <h3>Buscar</h3>
 <input type="text" id="busca" oninput="filtrarTabela()" placeholder="Digite um nome...">
 
-<div id="contador" style="margin-top:20px; font-weight:bold;"></div>
+<div id="contador"></div>
 
 <table>
 <thead>
@@ -79,7 +130,6 @@ body.dark .present { background:#2f4f2f; }
 <tbody id="lista"></tbody>
 </table>
 </div>
-
 
 <!-- Firebase -->
 <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
@@ -99,28 +149,25 @@ const firebaseConfig = {
   messagingSenderId: "719499907860",
   appId: "1:719499907860:web:e5a522fce3c19f9b012801"
 };
-
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
-/* LOGIN */
+/* ==========================
+   LOGIN
+=========================== */
 const SENHA = "1234@@@";
-
 function verificarSenha(){
     const s = document.getElementById("senhaInput").value;
     if(s === SENHA){
         localStorage.setItem("logado","1");
         document.getElementById("loginModal").style.display="none";
-    } else {
-        alert("Senha incorreta");
-    }
+    } else { alert("Senha incorreta"); }
 }
+if(localStorage.getItem("logado")==="1"){ document.getElementById("loginModal").style.display="none"; }
 
-if(localStorage.getItem("logado")==="1"){
-    document.getElementById("loginModal").style.display="none";
-}
-
-/* LISTA EM TEMPO REAL */
+/* ==========================
+   LISTA EM TEMPO REAL
+=========================== */
 let pessoas = [];
 let nextId = 1;
 
@@ -132,6 +179,9 @@ db.ref("pessoas").on("value", snap => {
     atualizarTabela();
 });
 
+/* ==========================
+   FUNÇÕES
+=========================== */
 function atualizarContador(){
     const total = pessoas.length;
     const presentes = pessoas.filter(p => p.presente).length;
@@ -143,43 +193,35 @@ function atualizarContador(){
 function atualizarTabela(lista = null){
     const tbody = document.getElementById("lista");
     tbody.innerHTML = "";
-
     (lista || pessoas).forEach(p => {
         const tr = document.createElement("tr");
         if(p.presente) tr.classList.add("present");
-
         tr.innerHTML = `
             <td>${p.nome}</td>
             <td>${p.presente ? "Presente" : "Ausente"}</td>
-            <td><button onclick="confirmarPresenca(${p.id})" ${p.presente ? "disabled":""}>Confirmar</button></td>
+            <td><button onclick="confirmarPresenca(${p.id})" ${p.presente?"disabled":""}>Confirmar</button></td>
         `;
         tbody.appendChild(tr);
     });
-
-    atualizarContador();
+    atualizarContador(); // contador atualizado sempre
 }
 
-/* ADICIONAR */
 function addPessoa(){
     const nome = document.getElementById("nome").value.trim();
     if(!nome) return alert("Digite um nome");
-
     const pessoa = { id: nextId++, nome, presente:false };
-    db.ref("pessoas/" + pessoa.id).set(pessoa);
-
-    document.getElementById("nome").value = "";
+    db.ref("pessoas/"+pessoa.id).set(pessoa);
+    document.getElementById("nome").value="";
 }
 
-/* CONFIRMAR */
 function confirmarPresenca(id){
-    db.ref("pessoas/" + id + "/presente").set(true);
+    db.ref("pessoas/"+id+"/presente").set(true);
 }
 
-/* FILTRAR */
 function filtrarTabela(){
     const termo = document.getElementById("busca").value.toLowerCase();
     if(!termo) return atualizarTabela();
-    const f = pessoas.filter(p => p.nome.toLowerCase().includes(termo));
+    const f = pessoas.filter(p=>p.nome.toLowerCase().includes(termo));
     atualizarTabela(f);
 }
 
@@ -189,39 +231,33 @@ function importarArquivo(){
     if(!arq) return alert("Escolha um arquivo");
 
     const reader = new FileReader();
-    reader.onload = e => {
-        const wb = XLSX.read(new Uint8Array(e.target.result), {type:"array"});
+    reader.onload = e=>{
+        const wb = XLSX.read(new Uint8Array(e.target.result),{type:"array"});
         const sheet = wb.SheetNames[0];
-        const dados = XLSX.utils.sheet_to_json(wb.Sheets[sheet], {header:1});
+        const dados = XLSX.utils.sheet_to_json(wb.Sheets[sheet],{header:1});
 
-        db.ref("pessoas").set(null);
+        db.ref("pessoas").set(null); // limpa lista antes
         nextId = 1;
-
         let count = 0;
-        dados.forEach(l => {
-            if(!l[0]) return;
-            const nome = String(l[0]).trim();
-            if(!nome) return;
 
+        dados.forEach(l=>{
+            if(!l || !l[0]) return;
+            const nome = String(l[0]).trim();
+            if(!nome || nome.toLowerCase().includes("nome")) return;
             const pessoa = { id: nextId++, nome, presente:false };
-            db.ref("pessoas/" + pessoa.id).set(pessoa);
+            db.ref("pessoas/"+pessoa.id).set(pessoa);
             count++;
         });
-
         alert(count+" nomes importados!");
     };
     reader.readAsArrayBuffer(arq);
 }
 
 /* DARK MODE */
-function toggleDark(){
-    document.body.classList.toggle("dark");
-}
+function toggleDark(){ document.body.classList.toggle("dark"); }
 
 /* PWA */
-if("serviceWorker" in navigator){
-    navigator.serviceWorker.register("sw.js");
-}
+if("serviceWorker" in navigator){ navigator.serviceWorker.register("sw.js"); }
 </script>
 
 </body>
