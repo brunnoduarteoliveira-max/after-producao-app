@@ -14,10 +14,8 @@ body.dark { background:#1e1e1e; color:#eee; }
 .header { position:sticky; top:0; background:#fff; display:flex; justify-content:space-between; align-items:center; padding:12px 20px; box-shadow:0 2px 8px rgba(0,0,0,0.05); z-index:1000; }
 body.dark .header { background:#2a2a2a; }
 .header h1 { font-size:1.4em; font-weight:bold; }
-#darkBtn { padding:8px 12px; border:none; border-radius:10px; cursor:pointer; background:#e0e0e0; color:#333; transition:0.2s; font-size:14px; }
-#darkBtn:hover { background:#d1d1d1; }
-body.dark #darkBtn { background:#444; color:white; }
-body.dark #darkBtn:hover { background:#555; }
+#darkBtn { padding:8px 12px; border:none; border-radius:10px; cursor:pointer; background:#555; color:white; transition:0.2s; font-size:14px; }
+#darkBtn:hover { background:#444; }
 
 /* CONTAINER PRINCIPAL */
 .container { max-width:600px; margin:20px auto; padding:0 10px 50px; }
@@ -29,12 +27,17 @@ input[type=text], input[type=file], input[type=password] {
 }
 input[type=text]:focus, input[type=password]:focus { border-color:#888; background:#fff; outline:none; }
 body.dark input { background:#3a3a3a; border:1px solid #555; color:white; }
+
 button.action-btn {
-  width:100%; padding:12px; border:none; border-radius:12px; margin-top:10px; font-size:16px; cursor:pointer; font-weight:600; background:#e0e0e0; color:#333; transition:0.2s;
+  width:100%; padding:12px; border:none; border-radius:12px; margin-top:10px;
+  font-size:16px; cursor:pointer; font-weight:600;
+  background:#555; /* cinza escuro */
+  color:white;
+  transition:0.2s;
 }
-button.action-btn:hover { background:#d1d1d1; }
-body.dark button.action-btn { background:#444; color:white; }
-body.dark button.action-btn:hover { background:#555; }
+button.action-btn:hover { background:#444; }
+body.dark button.action-btn { background:#333; color:white; }
+body.dark button.action-btn:hover { background:#222; }
 
 /* CONTADOR */
 #contador { text-align:center; font-weight:bold; padding:12px; margin:12px 0; border-radius:10px; background:#f0f4ff; }
@@ -43,14 +46,14 @@ body.dark #contador { background:#333; color:white; }
 /* LISTA DE PESSOAS EM CARTÕES */
 .card { background:#fff; padding:12px 16px; margin:8px 0; border-radius:12px; box-shadow:0 2px 6px rgba(0,0,0,0.05); display:flex; justify-content:space-between; align-items:center; transition:0.3s; }
 body.dark .card { background:#2a2a2a; }
-.card.present { background:#c7f0d8; }
-body.dark .card.present { background:#2f4f2f; }
 .card-name { font-size:16px; font-weight:500; }
-.card-status { font-size:14px; color:#555; }
-body.dark .card-status { color:#ccc; }
-.card button { padding:8px 14px; font-size:14px; border-radius:8px; background:#007bff; color:white; font-weight:600; border:none; cursor:pointer; transition:0.2s; }
-.card button:hover { background:#0056b3; }
-.card button:disabled { background:#888; cursor:default; }
+.card button {
+  padding:8px 14px; font-size:14px; border-radius:8px;
+  background:#000; /* preto */
+  color:white; font-weight:600; border:none; cursor:pointer; transition:0.2s;
+}
+.card button:hover { background:#333; } /* hover cinza escuro */
+.card button:disabled { background:#555; cursor:default; } /* desabilitado */
 
 /* BOTÃO VOLTAR AO TOPO */
 #btnTopo { position:fixed; bottom:18px; right:18px; padding:12px 16px; border:none; border-radius:50%; background:#888; color:white; font-size:18px; cursor:pointer; display:none; opacity:0.7; transition:0.2s; }
@@ -59,7 +62,8 @@ body.dark .card-status { color:#ccc; }
 /* MODAL LOGIN */
 #loginModal { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); color:white; display:flex; flex-direction:column; justify-content:center; align-items:center; z-index:9999; }
 #loginModal input { max-width:300px; margin-top:10px; }
-#loginModal button { max-width:180px; margin-top:12px; }
+#loginModal button { max-width:180px; margin-top:12px; background:#555; color:white; border:none; padding:10px; border-radius:8px; cursor:pointer; }
+#loginModal button:hover { background:#444; }
 
 </style>
 </head>
@@ -74,19 +78,20 @@ body.dark .card-status { color:#ccc; }
 
 <!-- MENU TOPO -->
 <div class="header">
-  <h1>AP - Confirmados</h1>
+AP - After Produções
+  <h1>Lista de Confirmados</h1>
   <button id="darkBtn" onclick="toggleDark()">Modo Escuro</button>
 </div>
 
 <div class="container">
   <div class="section">
     <input type="text" id="nome" placeholder="Digite o nome...">
-    <button class="action-btn" onclick="addPessoa()">Adicionar</button>
+    <button class="action-btn" onclick="addPessoa()">Adicionar manualmente</button>
   </div>
 
   <div class="section">
     <input type="file" id="fileInput" accept=".csv,.xlsx,.xls">
-    <button class="action-btn" onclick="importarArquivo()">Importar Excel/CSV</button>
+    <button class="action-btn" onclick="importarArquivo()">Importar Excel / CSV</button>
   </div>
 
   <div class="section">
@@ -114,7 +119,7 @@ const firebaseConfig = {
   projectId: "ap-listadeconfirmados",
   storageBucket: "ap-listadeconfirmados.firebasestorage.app",
   messagingSenderId: "719499907860",
-  appId: "1:719499907860:web:e5a522fce3c19f9b012801"
+  appId: "1:719499907860:web:e5a522fce3c19f012801"
 };
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
@@ -144,8 +149,7 @@ db.ref("pessoas").on("value", snapshot=>{
 function atualizarContador(){
   const total=pessoas.length;
   const presentes=pessoas.filter(p=>p.presente).length;
-  const ausentes=total-presentes;
-  document.getElementById("contador").innerText=`Presentes: ${presentes} | Ausentes: ${ausentes} | Total: ${total}`;
+  document.getElementById("contador").innerText=`Presentes: ${presentes} | Total: ${total}`;
 }
 
 function atualizarLista(lista=null){
@@ -153,9 +157,8 @@ function atualizarLista(lista=null){
   container.innerHTML="";
   (lista||pessoas).forEach(p=>{
     const card=document.createElement("div");
-    card.className="card"+(p.presente?" present":"");
+    card.className="card";
     card.innerHTML=`<div class="card-name">${p.nome}</div>
-                      <div class="card-status">${p.presente?"Presente":"Ausente"}</div>
                       <button onclick="confirmarPresenca(${p.id})" ${p.presente?"disabled":""}>Confirmar</button>`;
     container.appendChild(card);
   });
