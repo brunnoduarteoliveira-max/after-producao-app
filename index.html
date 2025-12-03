@@ -5,145 +5,108 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>AP - Lista de Confirmados</title>
 <style>
-/* RESET + BASE */
-html, body {
-    margin: 0; padding: 0;
-    font-family: Arial, sans-serif;
-    background: #f7f7f7;
-    font-size: 16px;
+/* RESET */
+* { margin:0; padding:0; box-sizing:border-box; font-family:'Segoe UI', sans-serif; }
+body { background:#f5f6fa; color:#333; transition:0.3s; font-size:16px; }
+body.dark { background:#1e1e1e; color:#eee; }
+
+/* MENU TOPO */
+.header { position:sticky; top:0; background:#fff; display:flex; justify-content:space-between; align-items:center; padding:12px 20px; box-shadow:0 2px 8px rgba(0,0,0,0.05); z-index:1000; }
+body.dark .header { background:#2a2a2a; }
+.header h1 { font-size:1.4em; font-weight:bold; }
+#darkBtn { padding:8px 12px; border:none; border-radius:10px; cursor:pointer; background:#e0e0e0; color:#333; transition:0.2s; font-size:14px; }
+#darkBtn:hover { background:#d1d1d1; }
+body.dark #darkBtn { background:#444; color:white; }
+body.dark #darkBtn:hover { background:#555; }
+
+/* CONTAINER PRINCIPAL */
+.container { max-width:600px; margin:20px auto; padding:0 10px 50px; }
+
+/* ADICIONAR NOME / IMPORTAR / BUSCAR */
+.section { margin-top:15px; }
+input[type=text], input[type=file], input[type=password] {
+  width:100%; padding:12px 14px; border-radius:10px; border:1px solid #ccc; margin-top:8px; font-size:16px; background:#fafafa; transition:0.2s;
 }
-
-body.dark { background:#222; color:#eee; }
-
-.container {
-    max-width: 600px;
-    margin: 0 auto;
-    padding: 20px;
-    box-sizing: border-box;
-    background: white;
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+input[type=text]:focus, input[type=password]:focus { border-color:#888; background:#fff; outline:none; }
+body.dark input { background:#3a3a3a; border:1px solid #555; color:white; }
+button.action-btn {
+  width:100%; padding:12px; border:none; border-radius:12px; margin-top:10px; font-size:16px; cursor:pointer; font-weight:600; background:#e0e0e0; color:#333; transition:0.2s;
 }
+button.action-btn:hover { background:#d1d1d1; }
+body.dark button.action-btn { background:#444; color:white; }
+body.dark button.action-btn:hover { background:#555; }
 
-body.dark .container { background:#333; color:white; }
+/* CONTADOR */
+#contador { text-align:center; font-weight:bold; padding:12px; margin:12px 0; border-radius:10px; background:#f0f4ff; }
+body.dark #contador { background:#333; color:white; }
 
-input, button {
-    width: 100%;
-    padding: 12px;
-    margin-top: 10px;
-    box-sizing: border-box;
-    font-size: 16px;
-    border-radius: 6px;
-    border: 1px solid #ccc;
-}
+/* LISTA DE PESSOAS EM CARTÕES */
+.card { background:#fff; padding:12px 16px; margin:8px 0; border-radius:12px; box-shadow:0 2px 6px rgba(0,0,0,0.05); display:flex; justify-content:space-between; align-items:center; transition:0.3s; }
+body.dark .card { background:#2a2a2a; }
+.card.present { background:#c7f0d8; }
+body.dark .card.present { background:#2f4f2f; }
+.card-name { font-size:16px; font-weight:500; }
+.card-status { font-size:14px; color:#555; }
+body.dark .card-status { color:#ccc; }
+.card button { padding:8px 14px; font-size:14px; border-radius:8px; background:#007bff; color:white; font-weight:600; border:none; cursor:pointer; transition:0.2s; }
+.card button:hover { background:#0056b3; }
+.card button:disabled { background:#888; cursor:default; }
 
-button {
-    background: #007bff;
-    color: white;
-    font-weight: bold;
-    cursor: pointer;
-    border: none;
-    transition: 0.2s;
-}
+/* BOTÃO VOLTAR AO TOPO */
+#btnTopo { position:fixed; bottom:18px; right:18px; padding:12px 16px; border:none; border-radius:50%; background:#888; color:white; font-size:18px; cursor:pointer; display:none; opacity:0.7; transition:0.2s; }
+#btnTopo:hover { background:#666; }
 
-button:hover { background: #0056b3; }
+/* MODAL LOGIN */
+#loginModal { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); color:white; display:flex; flex-direction:column; justify-content:center; align-items:center; z-index:9999; }
+#loginModal input { max-width:300px; margin-top:10px; }
+#loginModal button { max-width:180px; margin-top:12px; }
 
-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 20px;
-}
-
-th, td {
-    border: 1px solid #ccc;
-    padding: 12px;
-    text-align: left;
-    font-size: 16px;
-}
-
-.present {
-    background: #c8ffc8;
-    font-weight: bold;
-}
-
-body.dark .present { background: #2f4f2f; }
-
-#contador {
-    position: sticky;
-    top: 0;
-    background: #eef;
-    padding: 10px;
-    font-weight: bold;
-    text-align: center;
-    z-index: 10;
-}
-
-body.dark #contador { background: #555; color: white; }
-
-#btnTopo {
-    position: fixed;
-    bottom: 18px; right: 15px;
-    padding: 10px 12px;
-    background: #666; color: white;
-    border: none; border-radius: 6px;
-    cursor: pointer; display: none; opacity: 0.8;
-}
-#btnTopo:hover { background: #444; opacity: 1; }
-
-#loginModal {
-    position: fixed; top:0; left:0; width:100%; height:100%;
-    background:black; color:white;
-    display:flex; justify-content:center; align-items:center;
-    flex-direction:column; z-index:9999;
-}
-#loginModal input { max-width:300px; }
-#loginModal button { max-width:180px; margin-top:10px; }
 </style>
 </head>
 <body>
 
 <!-- LOGIN -->
 <div id="loginModal">
-    <h2>Digite a senha</h2>
-    <input type="password" id="senhaInput" placeholder="Senha">
-    <button onclick="verificarSenha()">Entrar</button>
+  <h2>Digite a senha</h2>
+  <input type="password" id="senhaInput" placeholder="Senha">
+  <button onclick="verificarSenha()">Entrar</button>
+</div>
+
+<!-- MENU TOPO -->
+<div class="header">
+  <h1>AP - Confirmados</h1>
+  <button id="darkBtn" onclick="toggleDark()">Modo Escuro</button>
 </div>
 
 <div class="container">
-<h1>AP - Lista de Confirmados</h1>
+  <div class="section">
+    <input type="text" id="nome" placeholder="Digite o nome...">
+    <button class="action-btn" onclick="addPessoa()">Adicionar</button>
+  </div>
 
-<button id="darkBtn" onclick="toggleDark()">Modo Escuro</button>
+  <div class="section">
+    <input type="file" id="fileInput" accept=".csv,.xlsx,.xls">
+    <button class="action-btn" onclick="importarArquivo()">Importar Excel/CSV</button>
+  </div>
 
-<h3>Adicionar nome</h3>
-<input type="text" id="nome" placeholder="Digite o nome...">
-<button onclick="addPessoa()">Adicionar</button>
+  <div class="section">
+    <input type="text" id="busca" oninput="filtrarTabela()" placeholder="Buscar nome...">
+  </div>
 
-<h3>Importar CSV/Excel</h3>
-<input type="file" id="fileInput" accept=".csv,.xlsx,.xls">
-<button onclick="importarArquivo()">Importar</button>
+  <div id="contador"></div>
 
-<h3>Buscar</h3>
-<input type="text" id="busca" oninput="filtrarTabela()" placeholder="Digite um nome...">
-
-<div id="contador"></div>
-
-<table>
-<thead>
-<tr><th>Nome</th><th>Status</th><th>Ação</th></tr>
-</thead>
-<tbody id="lista"></tbody>
-</table>
+  <div id="lista"></div>
 </div>
 
 <button id="btnTopo" onclick="voltarTopo()">↑</button>
 
-<!-- Firebase e XLSX -->
-<script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-database-compat.js"></script>
+<!-- FIREBASE -->
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 
 <script>
-// CONFIGURAÇÃO FIREBASE
+// FIREBASE
 const firebaseConfig = {
   apiKey: "AIzaSyCW7fYPJcXkqVXYXyLUOkU-acnVyD9a6AI",
   authDomain: "ap-listadeconfirmados.firebaseapp.com",
@@ -151,95 +114,92 @@ const firebaseConfig = {
   projectId: "ap-listadeconfirmados",
   storageBucket: "ap-listadeconfirmados.firebasestorage.app",
   messagingSenderId: "719499907860",
-  appId: "1:719499907860:web:e5a522fce3c19f9b012801",
-  measurementId: "G-G8SP4N5RCR"
+  appId: "1:719499907860:web:e5a522fce3c19f9b012801"
 };
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
 // LOGIN
-const SENHA = "1234@@@";
+const SENHA="1234@@@";
 function verificarSenha(){
-    const s = document.getElementById("senhaInput").value;
-    if(s===SENHA){
-        localStorage.setItem("logado","1");
-        document.getElementById("loginModal").style.display="none";
-    } else { alert("Senha incorreta"); }
+  const s=document.getElementById("senhaInput").value;
+  if(s===SENHA){ localStorage.setItem("logado","1"); document.getElementById("loginModal").style.display="none"; }
+  else{ alert("Senha incorreta"); }
 }
 if(localStorage.getItem("logado")==="1"){ document.getElementById("loginModal").style.display="none"; }
 
 // VARIÁVEIS
-let pessoas = [];
-let nextId = 1;
+let pessoas=[], nextId=1;
 
-// ESCUTAR ALTERAÇÕES EM TEMPO REAL
-db.ref("pessoas").on("value", snap=>{
-    const dados = snap.val();
-    pessoas = dados ? Object.values(dados) : [];
-    nextId = pessoas.length ? Math.max(...pessoas.map(x=>x.id))+1 : 1;
-    pessoas.sort((a,b)=> a.nome.localeCompare(b.nome));
-    atualizarTabela();
+// ESCUTA FIREBASE EM TEMPO REAL
+db.ref("pessoas").on("value", snapshot=>{
+  const dados = snapshot.val();
+  pessoas = dados ? Object.values(dados) : [];
+  nextId = pessoas.length ? Math.max(...pessoas.map(x=>x.id))+1 : 1;
+  pessoas.sort((a,b)=>a.nome.localeCompare(b.nome));
+  atualizarLista();
 });
 
 // FUNÇÕES
 function atualizarContador(){
-    const total = pessoas.length;
-    const presentes = pessoas.filter(p=>p.presente).length;
-    const ausentes = total - presentes;
-    document.getElementById("contador").innerText = `Presentes: ${presentes} | Ausentes: ${ausentes} | Total: ${total}`;
+  const total=pessoas.length;
+  const presentes=pessoas.filter(p=>p.presente).length;
+  const ausentes=total-presentes;
+  document.getElementById("contador").innerText=`Presentes: ${presentes} | Ausentes: ${ausentes} | Total: ${total}`;
 }
 
-function atualizarTabela(lista=null){
-    const tbody = document.getElementById("lista");
-    tbody.innerHTML = "";
-    (lista||pessoas).forEach(p=>{
-        const tr = document.createElement("tr");
-        if(p.presente) tr.classList.add("present");
-        tr.innerHTML = `<td>${p.nome}</td><td>${p.presente?"Presente":"Ausente"}</td>
-        <td><button onclick="confirmarPresenca(${p.id})" ${p.presente?"disabled":""}>Confirmar</button></td>`;
-        tbody.appendChild(tr);
-    });
-    atualizarContador();
+function atualizarLista(lista=null){
+  const container=document.getElementById("lista");
+  container.innerHTML="";
+  (lista||pessoas).forEach(p=>{
+    const card=document.createElement("div");
+    card.className="card"+(p.presente?" present":"");
+    card.innerHTML=`<div class="card-name">${p.nome}</div>
+                      <div class="card-status">${p.presente?"Presente":"Ausente"}</div>
+                      <button onclick="confirmarPresenca(${p.id})" ${p.presente?"disabled":""}>Confirmar</button>`;
+    container.appendChild(card);
+  });
+  atualizarContador();
 }
 
 function addPessoa(){
-    const nome = document.getElementById("nome").value.trim();
-    if(!nome) return alert("Digite um nome");
-    const pessoa = { id: nextId++, nome, presente:false };
-    db.ref("pessoas/"+pessoa.id).set(pessoa);
-    document.getElementById("nome").value="";
+  const nome=document.getElementById("nome").value.trim();
+  if(!nome) return alert("Digite um nome");
+  const pessoa={id:nextId++, nome, presente:false};
+  db.ref("pessoas/"+pessoa.id).set(pessoa);
+  document.getElementById("nome").value="";
 }
 
 function confirmarPresenca(id){ db.ref("pessoas/"+id+"/presente").set(true); }
 
 function filtrarTabela(){
-    const termo = document.getElementById("busca").value.toLowerCase();
-    if(!termo) return atualizarTabela();
-    atualizarTabela(pessoas.filter(p=>p.nome.toLowerCase().includes(termo)));
+  const termo=document.getElementById("busca").value.toLowerCase();
+  if(!termo) return atualizarLista();
+  atualizarLista(pessoas.filter(p=>p.nome.toLowerCase().includes(termo)));
 }
 
 // IMPORTAR
 function importarArquivo(){
-    const arq = document.getElementById("fileInput").files[0];
-    if(!arq) return alert("Escolha um arquivo");
-    const reader = new FileReader();
-    reader.onload = e=>{
-        const wb = XLSX.read(new Uint8Array(e.target.result),{type:"array"});
-        const sheet = wb.SheetNames[0];
-        const dados = XLSX.utils.sheet_to_json(wb.Sheets[sheet],{header:1});
-        db.ref("pessoas").set(null);
-        nextId=1; let count=0;
-        dados.forEach(l=>{
-            if(!l||!l[0]) return;
-            const nome = String(l[0]).trim();
-            if(!nome || nome.toLowerCase().includes("nome")) return;
-            const pessoa={id:nextId++, nome, presente:false};
-            db.ref("pessoas/"+pessoa.id).set(pessoa);
-            count++;
-        });
-        alert(count+" nomes importados!");
-    };
-    reader.readAsArrayBuffer(arq);
+  const arq=document.getElementById("fileInput").files[0];
+  if(!arq) return alert("Escolha um arquivo");
+  const reader=new FileReader();
+  reader.onload=e=>{
+    const wb=XLSX.read(new Uint8Array(e.target.result),{type:"array"});
+    const sheet=wb.SheetNames[0];
+    const dados=XLSX.utils.sheet_to_json(wb.Sheets[sheet],{header:1});
+    db.ref("pessoas").set(null);
+    nextId=1; let count=0;
+    dados.forEach(l=>{
+      if(!l||!l[0]) return;
+      const nome=String(l[0]).trim();
+      if(!nome || nome.toLowerCase().includes("nome")) return;
+      const pessoa={id:nextId++, nome, presente:false};
+      db.ref("pessoas/"+pessoa.id).set(pessoa);
+      count++;
+    });
+    alert(count+" nomes importados!");
+  };
+  reader.readAsArrayBuffer(arq);
 }
 
 // DARK MODE
@@ -247,9 +207,8 @@ function toggleDark(){ document.body.classList.toggle("dark"); }
 
 // VOLTAR AO TOPO
 function voltarTopo(){ window.scrollTo({top:0, behavior:"smooth"}); }
-window.addEventListener("scroll",()=>{ document.getElementById("btnTopo").style.display = window.scrollY>300?"block":"none"; });
+window.addEventListener("scroll",()=>{ document.getElementById("btnTopo").style.display=window.scrollY>300?"block":"none"; });
 </script>
 
 </body>
 </html>
-
