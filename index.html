@@ -10,14 +10,18 @@
 * { margin:0; padding:0; box-sizing:border-box; font-family:'Segoe UI', sans-serif; }
 body { background:#f5f6fa; color:#333; transition:0.3s; font-size:16px; }
 
-/* ----- NOVO MODO ESCURO PREMIUM ----- */
-body.dark { background:#121212; color:#eaeaea; }
+/* ----- NOVO MODO ESCURO SUAVE PREMIUM ----- */
+body.dark { background:#181a1b; color:#e8e8e8; }
 
-body.dark .header { background:#111; }
-body.dark .card { background:#1f1f1f; }
-body.dark .card.present { background:#2b5232; }
+body.dark .header { background:#202324; }
+body.dark .card { background:#242728; }
+body.dark .card.present { background:#294f38; }
 
-body.dark input { background:#1c1c1c; border:1px solid #444; color:#eaeaea; }
+body.dark input { 
+  background:#1e2021; 
+  border:1px solid #444; 
+  color:#eaeaea; 
+}
 
 /* MENU TOPO */
 .header {
@@ -33,27 +37,27 @@ body.dark input { background:#1c1c1c; border:1px solid #444; color:#eaeaea; }
 }
 .header h1 { font-size:1.4em; font-weight:bold; }
 
-/* Botão modo escuro */
+/* Botão modo escuro SUPER SUAVE */
 #darkBtn {
   padding:8px 12px;
   border:none;
-  border-radius:10px;
+  border-radius:12px;
   cursor:pointer;
-  background: rgba(0,0,0,0.05);
-  color:#000;
-  transition:0.2s;
+  background: rgba(0,0,0,0.04);
+  color:#222;
+  transition:0.25s;
   font-size:14px;
   backdrop-filter: blur(4px);
 }
-#darkBtn:hover { background: rgba(0,0,0,0.15); }
+#darkBtn:hover { background: rgba(0,0,0,0.12); }
 
-/* DARK MODE BUTTON */
+/* DARK MODE BUTTON (suave, translúcido, moderno) */
 body.dark #darkBtn {
-  background: rgba(255,255,255,0.1);
-  color:#eaeaea;
+  background: rgba(255,255,255,0.08);
+  color:#f0f0f0;
 }
 body.dark #darkBtn:hover {
-  background: rgba(255,255,255,0.2);
+  background: rgba(255,255,255,0.14);
 }
 
 /* CONTAINER */
@@ -76,7 +80,7 @@ input:focus {
   border-color:#666;
 }
 
-/* BOTOES PRETOS PREMIUM */
+/* BOTOES PRETOS (no modo claro) */
 button.action-btn {
   width:100%;
   padding:12px;
@@ -88,9 +92,18 @@ button.action-btn {
   font-weight:600;
   background:#000;
   color:white;
-  transition:0.2s;
+  transition:0.25s;
 }
 button.action-btn:hover { background:#2a2a2a; }
+
+/* BOTOES NO MODO ESCURO — suaves e claros */
+body.dark button.action-btn {
+  background: rgba(255,255,255,0.16);
+  color:#fff;
+}
+body.dark button.action-btn:hover {
+  background: rgba(255,255,255,0.22);
+}
 
 /* CONTADOR */
 #contador {
@@ -102,7 +115,8 @@ button.action-btn:hover { background:#2a2a2a; }
   background:#eaf0ff;
 }
 body.dark #contador {
-  background:#1f1f1f;
+  background:#222527;
+  color:#ddd;
 }
 
 /* CARTÕES */
@@ -124,9 +138,9 @@ body.dark #contador {
   font-weight:700;
 }
 
-/* DARK MODE CARTÕES */
-body.dark .card { background:#1f1f1f; }
-body.dark .card.present { background:#2b5232; }
+/* dark cards */
+body.dark .card { background:#242728; }
+body.dark .card.present { background:#294f38; }
 
 /* Botão confirmar */
 .card button {
@@ -138,7 +152,7 @@ body.dark .card.present { background:#2b5232; }
   font-weight:600;
   border:none;
   cursor:pointer;
-  transition:0.2s;
+  transition:0.25s;
 }
 .card button:hover { background:#333; }
 .card button:disabled {
@@ -146,7 +160,16 @@ body.dark .card.present { background:#2b5232; }
   cursor:default;
 }
 
-/* ANIMAÇÃO de confirmação */
+/* botão confirmar no dark mode */
+body.dark .card button {
+  background: rgba(255,255,255,0.14);
+  color:#fff;
+}
+body.dark .card button:hover {
+  background: rgba(255,255,255,0.22);
+}
+
+/* ANIMAÇÃO */
 .card.animar {
   animation: confirmarAnim 0.35s ease-out;
 }
@@ -156,7 +179,7 @@ body.dark .card.present { background:#2b5232; }
   100% { transform: scale(1); }
 }
 
-/* BOTÃO VOLTAR AO TOPO */
+/* VOLTAR AO TOPO */
 #btnTopo {
   position:fixed;
   bottom:18px;
@@ -294,7 +317,6 @@ db.ref("pessoas").on("value", snap=>{
 
   pessoas = dados ? Object.values(dados) : [];
 
-  // NÃO ORDENAR PARA NÃO MUDAR A POSIÇÃO DOS NOVOS
   nextId = pessoas.length ? Math.max(...pessoas.map(x=>x.id))+1 : 1;
 
   atualizarLista();
@@ -308,7 +330,7 @@ function atualizarContador(){
   document.getElementById("contador").innerText=`Total: ${tot} | Presentes: ${pres}`;
 }
 
-/* EXIBE LISTA (sem ordenar) */
+/* EXIBE LISTA */
 function atualizarLista(lista=null){
   const container=document.getElementById("lista");
   container.innerHTML="";
@@ -328,7 +350,7 @@ function atualizarLista(lista=null){
   });
 }
 
-/* ADICIONAR MANUALMENTE → FINAL DA LISTA */
+/* ADICIONAR FINAL DA LISTA */
 function addPessoa(){
   const nome=document.getElementById("nome").value.trim();
   if(!nome) return alert("Digite um nome");
@@ -340,7 +362,7 @@ function addPessoa(){
   document.getElementById("nome").value="";
 }
 
-/* CONFIRMAR + ANIMAÇÃO + NEGRITO + LIMPAR BUSCA */
+/* CONFIRMAR */
 function confirmarPresenca(id, btn){
   const card=btn.parentElement;
 
@@ -350,13 +372,12 @@ function confirmarPresenca(id, btn){
 
   card.classList.add("present");
   card.classList.add("animar");
-
   setTimeout(()=>card.classList.remove("animar"),350);
 
   document.getElementById("busca").value="";
 }
 
-/* BUSCA (ordenada apenas na filtragem) */
+/* BUSCA */
 function filtrarTabela(){
   const termo=document.getElementById("busca").value.toLowerCase();
   if(!termo) return atualizarLista();
